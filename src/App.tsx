@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { HeartIcon } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import {
   useAddFavouriteNote,
   useAddNote,
@@ -13,10 +14,6 @@ function App() {
   const favoriteNotes = useFavouriteNotes();
   const addFavoriteNote = useAddFavouriteNote();
   const removeFavoriteNote = useRemoveFavouriteNote();
-
-  if (notes.isLoading || favoriteNotes.isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -37,14 +34,18 @@ function App() {
             <button
               onClick={() =>
                 isFaved
-                  ? removeFavoriteNote.mutate(note.id)
-                  : addFavoriteNote.mutate(note.id)
+                  ? removeFavoriteNote.mutateAsync(note.id)
+                  : addFavoriteNote.mutateAsync(note.id)
               }
               disabled={
                 addFavoriteNote.isLoading || removeFavoriteNote.isLoading
               }
             >
-              {isFaved ? "Unfave" : "Fave"}
+              {isFaved ? (
+                <HeartIcon className="text-red-600 w-6 h-6" />
+              ) : (
+                <HeartOutline className="text-red-600 w-6 h-6" />
+              )}
             </button>
           </div>
         );
@@ -63,7 +64,9 @@ function App() {
       >
         <input type="text" required placeholder="Title" name="title" />
         <input type="text" required placeholder="Content" name="content" />
-        <button type="submit">Add note</button>
+        <button type="submit" disabled={addNote.isLoading}>
+          Add note
+        </button>
       </form>
     </div>
   );
