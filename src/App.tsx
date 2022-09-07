@@ -1,22 +1,34 @@
 import { useEffect, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState();
+interface Note {
+  id: number;
+  title: string;
+  body: string;
+}
 
-  const fetchPosts = async () => {
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+function App() {
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  const fetchNotes = async () => {
+    const response = await fetch("/api/notes");
     const data = await response.json();
-    setPosts(data);
+    setNotes(data);
   };
 
   useEffect(() => {
-    fetchPosts();
+    fetchNotes();
   }, []);
 
   return (
     <div>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
+
+      {notes?.map((note) => (
+        <div key={note.id}>
+          <h2>{note.title}</h2>
+          <p>{note.body}</p>
+        </div>
+      ))}
     </div>
   );
 }

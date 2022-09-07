@@ -1,30 +1,73 @@
 import { rest } from "msw";
 
 // Mock Data
-export const posts = [
+export const notes = [
   {
-    userId: 1,
-    id: 1,
-    title: "first post title",
-    body: "first post body",
+    id: "1",
+    title: "Note 1",
+    content: "This is note 1",
   },
   {
-    userId: 2,
-    id: 5,
-    title: "second post title",
-    body: "second post body",
-  },
-  {
-    userId: 3,
-    id: 6,
-    title: "third post title",
-    body: "third post body",
+    id: "2",
+    title: "Note 2",
+    content: "This is note 2",
   },
 ];
 
-// Define handlers that catch the corresponding requests and returns the mock data.
+const favourites = ["1"];
+
 export const handlers = [
-  rest.get("https://jsonplaceholder.typicode.com/posts", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(posts));
+  rest.get("/api/notes", (req, res, ctx) => {
+    if (req.url.searchParams.get("isFavourite") === "true") {
+      return res(
+        ctx.status(200),
+        ctx.json(notes.filter((note) => favourites.includes(note.id)))
+      );
+    }
+
+    return res(ctx.status(200), ctx.json(notes));
+  }),
+  rest.get("/api/notes/:id", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json(notes.find((note) => note.id === req.params.id))
+    );
+  }),
+  rest.post("/api/notes", async (req, res, ctx) => {
+    const note = await req.json();
+
+    console.log(note);
+
+    notes.push(note);
+
+    return res(ctx.status(200), ctx.json(note));
+  }),
+  rest.put("/api/notes/:id", async (req, res, ctx) => {
+    const note = await req.json();
+
+    const index = notes.findIndex((note) => note.id === req.params.id);
+
+    notes[index] = note;
+
+    return res(ctx.status(200), ctx.json(note));
+  }),
+  rest.delete("/api/notes/:id", (req, res, ctx) => {
+    const index = notes.findIndex((note) => note.id === req.params.id);
+
+    notes.splice(index, 1);
+
+    return res(ctx.status(200), ctx.json({}));
+  }),
+  rest.post("/api/notes/:id/favourite", (req, res, ctx) => {
+    favourites.push(req.params.id as string);
+
+    return res(ctx.status(200), ctx.json({}));
+  }),
+  rest.delete("/api/notes/:id/favourite", (req, res, ctx) => {
+    const index = favourites.findIndex((id) => id === req.params.id);
+
+    favourites.splice(index, 1);
+
+    return res(ctx.status(200), ctx.json({}));
   }),
 ];
