@@ -1,34 +1,70 @@
 import { useEffect, useState } from "react";
-
-interface Note {
-  id: number;
-  title: string;
-  body: string;
-}
+import {
+  useAddFavouriteNote,
+  useAddNote,
+  useFavouriteNotes,
+  useNotes,
+  useRemoveFavouriteNote,
+} from "./services/notes";
 
 function App() {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const notes = useNotes();
+  const addNote = useAddNote();
+  const favoriteNotes = useFavouriteNotes();
+  const addFavoriteNote = useAddFavouriteNote();
+  const removeFavoriteNote = useRemoveFavouriteNote();
 
-  const fetchNotes = async () => {
-    const response = await fetch("/api/notes");
-    const data = await response.json();
-    setNotes(data);
-  };
-
-  useEffect(() => {
-    fetchNotes();
-  }, []);
+  if (notes.isLoading || favoriteNotes.isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
 
-      {notes?.map((note) => (
-        <div key={note.id}>
-          <h2>{note.title}</h2>
-          <p>{note.body}</p>
-        </div>
-      ))}
+      <p>
+        You have {notes.data?.length} notes and {favoriteNotes.data?.length}{" "}
+        favourites.
+      </p>
+
+      {notes.data?.map((note) => {
+        const isFaved = favoriteNotes.data?.find((n) => n.id === note.id);
+
+        return (
+          <div key={note.id}>
+            <h2 className="text-xl font-bold">{note.title}</h2>
+            <p>{note.content}</p>
+            <button
+              onClick={() =>
+                isFaved
+                  ? removeFavoriteNote.mutate(note.id)
+                  : addFavoriteNote.mutate(note.id)
+              }
+              disabled={
+                addFavoriteNote.isLoading || removeFavoriteNote.isLoading
+              }
+            >
+              {isFaved ? "Unfave" : "Fave"}
+            </button>
+          </div>
+        );
+      })}
+
+      <form
+        key={notes.dataUpdatedAt}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const title = formData.get("title") as string;
+          const content = formData.get("content") as string;
+
+          addNote.mutate({ title, content });
+        }}
+      >
+        <input type="text" required placeholder="Title" name="title" />
+        <input type="text" required placeholder="Content" name="content" />
+        <button type="submit">Add note</button>
+      </form>
     </div>
   );
 }
