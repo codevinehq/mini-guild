@@ -7,6 +7,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import Loader from "./components/Loader";
 import Notifications from "./components/Notifications";
+import GlobalLoader from "./components/GlobalLoader";
 
 if (process.env.NODE_ENV === "development") {
   const { worker } = await import("./mocks/browser");
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Suspense fallback={<Loader />}>
       <QueryClientProvider client={queryClient}>
         <Notifications />
+        <GlobalLoader />
         <App />
       </QueryClientProvider>
     </Suspense>

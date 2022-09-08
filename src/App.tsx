@@ -7,6 +7,7 @@ import {
   useNotes,
   useRemoveFavouriteNote,
 } from "./services/notes";
+import Navigation from "./components/Navigation";
 
 function App() {
   const notes = useNotes();
@@ -17,12 +18,16 @@ function App() {
 
   return (
     <div>
+      <Navigation />
+
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
 
       <p>
-        You have {notes.data?.length} notes and {favoriteNotes.data?.length}{" "}
-        favourites.
+        You have {notes.data?.length ?? "_"} notes and{" "}
+        {favoriteNotes.data?.length ?? "_"} favourites.
       </p>
+
+      {notes.isLoading && <p className="my-6">Loading notes...</p>}
 
       {notes.data?.map((note) => {
         const isFaved = favoriteNotes.data?.find((n) => n.id === note.id);

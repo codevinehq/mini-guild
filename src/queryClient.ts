@@ -6,7 +6,6 @@ export const queryClient = new QueryClient({
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
-      suspense: true,
       onError: () => {
         useNotificationsStore.getState().addNotification({
           message: "Request failed",

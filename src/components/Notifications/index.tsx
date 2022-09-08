@@ -7,9 +7,9 @@ import {
 } from "@heroicons/react/20/solid";
 import { useEffect } from "react";
 
-type NotificationState = ReturnType<typeof useNotificationsStore.getState>;
-type NotificationProps = NotificationState["notifications"][number] & {
-  onRemove: NotificationState["removeNotification"];
+type NotificationStoreState = ReturnType<typeof useNotificationsStore.getState>;
+type NotificationProps = NotificationStoreState["notifications"][number] & {
+  onRemove: NotificationStoreState["removeNotification"];
 };
 
 const Notification = ({ id, message, type, onRemove }: NotificationProps) => {
