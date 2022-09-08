@@ -19,15 +19,24 @@ const favourites = ["1"];
 
 export const handlers = [
   rest.get("/api/notes", (req, res, ctx) => {
-    if (req.url.searchParams.get("isFavourite") === "true") {
-      return res(
-        ctx.delay(),
-        ctx.status(200),
-        ctx.json(notes.filter((note) => favourites.includes(note.id)))
-      );
-    }
+    const favouritesOnly = req.url.searchParams.get("isFavourite") === "true";
+    const search = req.url.searchParams.get("search");
 
-    return res(ctx.delay(), ctx.status(200), ctx.json(notes));
+    return res(
+      ctx.delay(),
+      ctx.status(200),
+      ctx.json(
+        notes.filter((note) => {
+          let match =
+            (!favouritesOnly || favourites.includes(note.id)) &&
+            (!search ||
+              (search &&
+                note.title.toLocaleLowerCase().includes(search.toLowerCase())));
+
+          return match;
+        })
+      )
+    );
   }),
   rest.get("/api/notes/:id", (req, res, ctx) => {
     return res(

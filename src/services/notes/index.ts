@@ -9,10 +9,14 @@ export interface Note {
   content: string;
 }
 
-const useNotes = () => {
-  return useQuery<Note[]>(["notes"], () => http.get("/api/notes"), {
-    keepPreviousData: true,
-  });
+const useNotes = ({ search }: { search?: string } = {}) => {
+  return useQuery<Note[]>(
+    ["notes", search],
+    () => http.get("/api/notes" + (search ? `?search=${search}` : "")),
+    {
+      keepPreviousData: true,
+    }
+  );
 };
 
 const useNote = (id: Note["id"]) => {

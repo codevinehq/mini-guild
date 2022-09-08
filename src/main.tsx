@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import App from "./App";
 import "./index.css";
 
@@ -20,7 +22,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <QueryClientProvider client={queryClient}>
         <Notifications />
         <GlobalLoader />
-        <App />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<App />} />
+          </Routes>
+        </BrowserRouter>
       </QueryClientProvider>
     </Suspense>
   </React.StrictMode>
