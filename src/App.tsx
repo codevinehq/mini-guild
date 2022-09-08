@@ -1,5 +1,6 @@
 import { HeartIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
+import { useSearchParams } from "react-router-dom";
 import {
   useAddFavouriteNote,
   useAddNote,
@@ -8,9 +9,16 @@ import {
   useRemoveFavouriteNote,
 } from "./services/notes";
 import Navigation from "./components/Navigation";
+import useDebounce from "./hooks/useDebounce";
+import Loader from "./components/Loader";
 
 function App() {
-  const notes = useNotes();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParam = searchParams.get("search") ?? undefined;
+  const searchText = useDebounce<typeof searchParam>(searchParam, 500);
+  const notes = useNotes({
+    search: searchText,
+  });
   const addNote = useAddNote();
   const favoriteNotes = useFavouriteNotes();
   const addFavoriteNote = useAddFavouriteNote();
@@ -19,6 +27,18 @@ function App() {
   return (
     <div>
       <Navigation />
+
+      <form className="flex gap-2 items-center">
+        <input
+          type="text"
+          placeholder="Search"
+          defaultValue={searchParam}
+          onChange={(e) => {
+            setSearchParams({ search: e.target.value });
+          }}
+        />
+        {notes.isFetching && <Loader />}
+      </form>
 
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
 
