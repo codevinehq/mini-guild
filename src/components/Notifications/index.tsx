@@ -23,10 +23,10 @@ const Notification = ({ id, message, type, onRemove }: NotificationProps) => {
   return (
     <div
       className={cn(
-        "rounded-md p-4 w-fit ml-auto mx-4 mb-2 last-of-type:mb-4",
+        "rounded-md p-4 w-fit ml-auto mx-4 mb-2 last-of-type:mb-4 border",
         {
-          "bg-green-50": type === "success",
-          "bg-red-50": type === "error",
+          "bg-green-50 border-green-400": type === "success",
+          "bg-red-50 border-red-400": type === "error",
         }
       )}
     >

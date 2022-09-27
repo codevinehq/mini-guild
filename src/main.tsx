@@ -21,7 +21,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Suspense fallback={<Loader />}>
       <QueryClientProvider client={queryClient}>
         <Notifications />
-        <GlobalLoader />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />} />
